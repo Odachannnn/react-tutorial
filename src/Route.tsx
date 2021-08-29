@@ -5,6 +5,7 @@ import { SideLessHomeLayout } from "./layouts/SideLessHome";
 import { SimpleLayout } from "./layouts/Simple";
 
 import { Home } from "./pages/Home";
+import { Watch } from "./pages/Watch"
 
 
 export const RootRouter = () => {
@@ -17,7 +18,7 @@ export const RootRouter = () => {
             element: <SideLessHomeLayout />,
             children: [
                 { path: "watch", element: <Navigate to="/" />},
-                { path: "watch/:videoId", element: <div>watch</div> }
+                { path: "watch/:videoId", element: <Watch /> }
             ],
         },
         {
