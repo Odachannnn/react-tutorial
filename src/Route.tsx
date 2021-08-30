@@ -9,6 +9,7 @@ import { Watch } from "./pages/Watch";
 import { Upload } from "./pages/Upload";
 import { Login } from "./pages/Login";
 import { Signup } from "./pages/Signup";
+import { ForgetPassForm } from "./pages/ForgetPassForm";
 
 
 export const RootRouter = () => {
@@ -32,7 +33,7 @@ export const RootRouter = () => {
             children: [
                 { path: "login", element: <Login /> },
                 { path: "signup", element: <Signup /> },
-                { path: "forget", element: <div>パスワードリセット</div> },
+                { path: "forget", element: <ForgetPassForm /> },
                 { path: "404", element: <div>Not Found</div> },
                 { path: "*", element: <Navigate to="/404" /> },
             ],
