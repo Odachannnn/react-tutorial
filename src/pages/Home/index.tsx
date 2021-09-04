@@ -19,6 +19,7 @@ const query = `
 `;
 
 let called = false;
+const apiURL : string = process.env.REACT_APP_GRAPHQL_END_POINT!;
 const apiKEY : string = process.env.REACT_APP_X_HASURA_ADMIN_SECRET!; 
 
 export const Home = () => {
@@ -30,7 +31,7 @@ export const Home = () => {
 
         if (!called) {
             // Hasuraのコンソールに記載されているGraphQLエンドポイント
-            fetch("https://dominant-garfish-81.hasura.app/v1/graphql", {
+            fetch(apiURL, {
                 method: "post",
 
                 // 認証のためのリクエストヘッダー
