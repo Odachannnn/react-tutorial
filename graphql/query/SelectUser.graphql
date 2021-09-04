@@ -1,0 +1,9 @@
+query SelectUserById($id: Int!) {
+  users_by_pk(id: $id) {
+    created_at
+    id
+    name
+    profile_photo_url
+    updated_at
+  }
+}
