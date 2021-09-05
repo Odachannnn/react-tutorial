@@ -11,6 +11,7 @@ import { Logo } from "../../components/Logo";
 import { SearchBar } from "./SearchBar"
 import { useSelectUserByIdQuery } from "../../utils/graphql/generated";
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 
 import useStyles from "./style"
 
@@ -34,9 +35,9 @@ export const DashboardHeader = () => {
                     <IconButton>
                         <MenuIcon />
                     </IconButton>
-                    <div className={styles.logo}>
+                    <Link to="/" className={styles.logo}>
                         <Logo />
-                    </div>
+                    </Link>
                 </div>
 
                 <SearchBar />
