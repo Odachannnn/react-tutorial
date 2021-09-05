@@ -1,7 +1,9 @@
-import { useRef, useState } from "react";
+import { useRef, useEffect } from "react";
 import { FireSignupType } from "../../../utils/Firebase/signup";
+import { useNavigate } from "react-router-dom";
 import { signup as fireSignup } from "../../../utils/Firebase/signup";
 import { useInsertUserMutation } from "../../../utils/graphql/generated";
+import { SetErrorFn, useAuthHelper } from "../useAuthHelper";
 
 export type SignupPropsType = {
   name: string;
@@ -14,58 +16,71 @@ export const useSignup = () => {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
 
-  // エラーが発生したら全てここに格納する
-  const [error, setError] = useState<Error>();
-
-  // サインアップの処理が実行されている間、trueになる。
-  const [loading, setLoading] = useState<boolean>(false);
+  // リダイレクト用の関数
+  const navigate = useNavigate();
 
   // userを追加するためのGraohQL Mutation Hooks
   const [insertMutation, { error: apolloError }] = useInsertUserMutation();
 
+  const formValidation = (setError: SetErrorFn) => {
+    let invalidValidation = false;
+
+    if (!nameRef.current?.value) {
+      setError("name", "名前が入力されていません");
+      invalidValidation = true;
+    }
+
+    if (!emailRef.current?.value) {
+      setError("email", "メールアドレスを入力してください");
+      invalidValidation = true;
+    }
+
+    if (!passwordRef.current?.value) {
+      setError("password", "パスワードを入力してください");
+      invalidValidation = true;
+    }
+
+    return invalidValidation;
+  }
+
   // 実際のサインアップのロジック
   const signup = async () => {
-    if (
-      !nameRef.current?.value ||
-      !emailRef.current?.value ||
-      !passwordRef.current?.value
-    ) {
-      // 一つでも値が入っていないフォームがあったら、処理を中断
-      // 最終的にここで、エラー処理を入れてユーザーにエラーを表示する
-      return;
+    // Firebaseのサインアップ処理を実行
+    const { user } = await fireSignup({
+      email: emailRef.current?.value || "",
+      password: passwordRef.current?.value || "",
+    });
+
+    if (!user?.uid) {
+      throw new Error("ユーザーの登録に失敗しました。");
     }
 
-    try {
-      setLoading(true);
-      // Firebaseのサインアップ処理を実行
-      const { user } = await fireSignup({
-        email: emailRef.current.value,
-        password: passwordRef.current.value,
-      });
+    // Hasuraにuserを作成する
+    const apolloResponse = await insertMutation({
+      variables: {
+        name: nameRef.current?.value || "",
+        email: emailRef.current?.value || "",
+      },
+    });
 
-      if (!user?.uid) {
-        throw new Error("ユーザーの登録に失敗しました。");
-      }
-
-      // Hasuraにuserを作成する
-      const apolloResponse = await insertMutation({
-        variables: {
-          name: nameRef.current.value,
-          email: emailRef.current.value,
-        },
-      });
-
-      if (apolloResponse.data?.insert_users_one?.id) {
-        // `/`へリダイレクト
-      } else {
-        throw new Error("ユーザーの登録に失敗しました。");
-      }
-    } catch (error) {
-      setError(error);
-    } finally {
-      setLoading(false);
+    if (apolloResponse.data?.insert_users_one?.id) {
+      navigate("/");
+    } else {
+      throw new Error("ユーザーの登録に失敗しました。");
     }
   };
+
+
+  const { authExecute, error, setErrorHander, loading } = useAuthHelper(
+    signup,
+    formValidation
+  );
+
+  useEffect(() => {
+    if (apolloError?.message) {
+      setErrorHander("main", apolloError.message);
+    }
+  }, [apolloError]);
 
   return {
     ref: {
