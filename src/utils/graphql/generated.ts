@@ -331,6 +331,7 @@ export type Timestamptz_Comparison_Exp = {
 export type Users = {
   __typename?: 'users';
   created_at: Scalars['timestamptz'];
+  email: Scalars['String'];
   id: Scalars['Int'];
   name: Scalars['String'];
   profile_photo_url: Scalars['String'];
@@ -379,6 +380,7 @@ export type Users_Bool_Exp = {
   _not?: Maybe<Users_Bool_Exp>;
   _or?: Maybe<Array<Users_Bool_Exp>>;
   created_at?: Maybe<Timestamptz_Comparison_Exp>;
+  email?: Maybe<String_Comparison_Exp>;
   id?: Maybe<Int_Comparison_Exp>;
   name?: Maybe<String_Comparison_Exp>;
   profile_photo_url?: Maybe<String_Comparison_Exp>;
@@ -399,6 +401,7 @@ export type Users_Inc_Input = {
 /** input type for inserting data into table "users" */
 export type Users_Insert_Input = {
   created_at?: Maybe<Scalars['timestamptz']>;
+  email?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['Int']>;
   name?: Maybe<Scalars['String']>;
   profile_photo_url?: Maybe<Scalars['String']>;
@@ -409,6 +412,7 @@ export type Users_Insert_Input = {
 export type Users_Max_Fields = {
   __typename?: 'users_max_fields';
   created_at?: Maybe<Scalars['timestamptz']>;
+  email?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['Int']>;
   name?: Maybe<Scalars['String']>;
   profile_photo_url?: Maybe<Scalars['String']>;
@@ -419,6 +423,7 @@ export type Users_Max_Fields = {
 export type Users_Min_Fields = {
   __typename?: 'users_min_fields';
   created_at?: Maybe<Scalars['timestamptz']>;
+  email?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['Int']>;
   name?: Maybe<Scalars['String']>;
   profile_photo_url?: Maybe<Scalars['String']>;
@@ -444,6 +449,7 @@ export type Users_On_Conflict = {
 /** Ordering options when selecting data from "users". */
 export type Users_Order_By = {
   created_at?: Maybe<Order_By>;
+  email?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
   name?: Maybe<Order_By>;
   profile_photo_url?: Maybe<Order_By>;
@@ -460,6 +466,8 @@ export enum Users_Select_Column {
   /** column name */
   CreatedAt = 'created_at',
   /** column name */
+  Email = 'email',
+  /** column name */
   Id = 'id',
   /** column name */
   Name = 'name',
@@ -472,6 +480,7 @@ export enum Users_Select_Column {
 /** input type for updating data in table "users" */
 export type Users_Set_Input = {
   created_at?: Maybe<Scalars['timestamptz']>;
+  email?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['Int']>;
   name?: Maybe<Scalars['String']>;
   profile_photo_url?: Maybe<Scalars['String']>;
@@ -506,6 +515,8 @@ export type Users_Sum_Fields = {
 export enum Users_Update_Column {
   /** column name */
   CreatedAt = 'created_at',
+  /** column name */
+  Email = 'email',
   /** column name */
   Id = 'id',
   /** column name */
@@ -814,6 +825,7 @@ export type Videos_Variance_Fields = {
 
 export type InsertUserMutationVariables = Exact<{
   name: Scalars['String'];
+  email: Scalars['String'];
 }>;
 
 
@@ -824,12 +836,12 @@ export type SelectUserByIdQueryVariables = Exact<{
 }>;
 
 
-export type SelectUserByIdQuery = { __typename?: 'query_root', users_by_pk?: Maybe<{ __typename?: 'users', created_at: any, id: number, name: string, profile_photo_url: string, updated_at: any }> };
+export type SelectUserByIdQuery = { __typename?: 'query_root', users_by_pk?: Maybe<{ __typename?: 'users', created_at: any, id: number, name: string, email: string, profile_photo_url: string, updated_at: any }> };
 
 
 export const InsertUserDocument = gql`
-    mutation InsertUser($name: String!) {
-  insert_users_one(object: {name: $name, profile_photo_url: ""}) {
+    mutation InsertUser($name: String!, $email: String!) {
+  insert_users_one(object: {name: $name, email: $email, profile_photo_url: ""}) {
     created_at
     id
     name
@@ -854,6 +866,7 @@ export type InsertUserMutationFn = Apollo.MutationFunction<InsertUserMutation, I
  * const [insertUserMutation, { data, loading, error }] = useInsertUserMutation({
  *   variables: {
  *      name: // value for 'name'
+ *      email: // value for 'email'
  *   },
  * });
  */
@@ -870,6 +883,7 @@ export const SelectUserByIdDocument = gql`
     created_at
     id
     name
+    email
     profile_photo_url
     updated_at
   }
